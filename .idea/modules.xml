@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/BLEDemo4_Advertising.iml" filepath="$PROJECT_DIR$/BLEDemo4_Advertising.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BLEDemo4_Advertising-master.iml" filepath="$PROJECT_DIR$/.idea/modules/BLEDemo4_Advertising-master.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/BLEDemo4_Advertising-master.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/BLEDemo4_Advertising-master.app.iml" />
     </modules>
   </component>
 </project>

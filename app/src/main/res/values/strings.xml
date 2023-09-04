@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">BLE Advertise</string>
+    <string name="app_name">MuSe protocol via black box</string>
+    <string name="broadcast_ble_advertisement">Broadcast BLE Advertisement:</string>
+    <string name="enable_advertising">Enable Advertising:</string>
+    <string name="ready_to_advertise">Ready to advertise.</string>
+    <string name="enable_receiving">Enable Receiving:</string>
+    <string name="ready_to_receive">Ready to receive.</string>
+    <string name="receive_ble_advertisement">Receive BLE Advertisement:</string>
 </resources>

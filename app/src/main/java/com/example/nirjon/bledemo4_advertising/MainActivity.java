@@ -15,11 +15,13 @@ import android.os.ParcelUuid;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import java.nio.charset.Charset;
+//import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,13 +29,20 @@ import java.util.UUID;
 
 import static android.bluetooth.le.AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY;
 import static android.bluetooth.le.AdvertiseSettings.ADVERTISE_TX_POWER_HIGH;
+import static com.example.nirjon.bledemo4_advertising.BleUtil.getBleCommand;
 
 public class MainActivity extends AppCompatActivity {
 
     Switch mySwitch, mySwitchr;
-    TextView myTV, myTVR;
+    TextView myTV, myTVR, bleCommandPrefex, data, time;
+    EditText editName;
+    CheckBox hexData;
     //String myUUIDstring = "CDB7950D-73F1-4D4D-8E47-C090502DBD63";
-    String myUUIDstring = "ec505efd-75b9-44eb-8f2a-6fe0b41e7264";
+    //String myUUIDstring = "ec505efd-75b9-44eb-8f2a-6fe0b41e7264";
+    String myUUIDstring = "0000fff0-0000-1000-8000-00805f9b34fb";
+    int cid = 0xFFF0;
+    //public String rawAddress = "77 62 4d 53 45";
+
 
     BluetoothManager myManager;
     BluetoothAdapter myAdapter;
@@ -124,10 +133,42 @@ public class MainActivity extends AppCompatActivity {
         return hexstr.toString();
     }
 
+    public String byteArrayToHex(byte[] a) {
+        StringBuilder sb = new StringBuilder(a.length * 2);
+        for(byte b: a)
+            sb.append(String.format("%02x", b));
+        return sb.toString();
+    }
+
+    public String hexOrDec(int i) { //BLEUtil can accept hex values, but this is not used in the application
+        if(data.getText().toString().isEmpty()) {
+            if (hexData.isChecked()) {
+                String string = String.format("%02x", i);
+                return string;
+            } else {
+                if (i > 98) {
+                    advFlag = false;
+                }
+                String string = String.format("%02d", i);
+                return string;
+            }
+        }
+        String string = data.getText().toString();
+        if (string.length() < 2)
+            string = "0" + string;
+        return string;
+    }
+
+
     void BT_Adv_init()
     {
         myTV = (TextView) findViewById(R.id.tv);
+        bleCommandPrefex = (TextView) findViewById(R.id.bleCommandPrefex);
+        data = (TextView) findViewById(R.id.myData);
+        time = (TextView) findViewById(R.id.time);
         mySwitch = (Switch) findViewById(R.id.switchID);
+        editName = (EditText) findViewById(R.id.rawAddress);
+        hexData = (CheckBox) findViewById(R.id.hexdata);
 
         myManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         myAdapter = myManager.getAdapter();
@@ -154,14 +195,21 @@ public class MainActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            ParcelUuid puuid = new ParcelUuid(UUID.fromString(myUUIDstring));
+                            //ParcelUuid puuid = new ParcelUuid(UUID.fromString(myUUIDstring));
                             advFlag = true;
-                            for(int i = 0; i < 1000000 && advFlag == true; i++){
-                                final String str = String.format("%06d", i);
+                            String rawAddress = editName.getText().toString();
+                            int time_ms = Integer.parseInt(time.getText().toString());
+
+                            for(int i = 0; i < 256 && advFlag == true; i++){
+                                final String str = String.format("%11d", i);
+                                final String bleCommand = hexOrDec(i);
+
+                                byte [] arr3 = getBleCommand(rawAddress, bleCommand);
+                                final String str3 = byteArrayToHex(arr3);
 
                                 myAdvertiseData = new AdvertiseData.Builder()
-                                        .addServiceUuid(puuid)
-                                        .addServiceData(puuid, str.getBytes(Charset.forName("UTF-8")))
+                                        //.addServiceUuid(puuid)
+                                        .addManufacturerData(cid, arr3)
                                         .setIncludeDeviceName(false)
                                         .setIncludeTxPowerLevel(false)
                                         .build();
@@ -171,15 +219,21 @@ public class MainActivity extends AppCompatActivity {
                                         @Override
                                         public void run() {
 
-                                            myTV.setText("Service UUID: " + myUUIDstring + "\n"
-                                                    + "Service Data: " + str
-                                                    + " (0x"  + stringToHex(str) + ")");
-                                            myTV.invalidate();
+                                            myTV.setText("UUID: " + myUUIDstring.toUpperCase() + "\n"
+                                                    + "CID: 0x" + Integer.toHexString(cid).toUpperCase() + ", "
+                                                    + "Raw Address: " + rawAddress + "\n"
+                                                    + "Data: 0x" + bleCommand.toUpperCase()
+                                                    + " (" + str3.toUpperCase() + ")");
+                                            myTV.requestLayout();
+
+                                            bleCommandPrefex.append(bleCommand.toUpperCase() + ": "
+                                                    + str3.toUpperCase() + "\n");
+                                            bleCommandPrefex.requestLayout();
                                         }
                                     });
 
                                     myAdvertiser.startAdvertising(myAdvertiseSettings, myAdvertiseData, myAdvertiseCallback);
-                                    Thread.sleep(1000);
+                                    Thread.sleep(time_ms);
                                     myAdvertiser.stopAdvertising(myAdvertiseCallback);
                                     Log.v("Tag", "Advertise: " + str);
                                 } catch (InterruptedException e) {
