@@ -19,13 +19,17 @@
         android:layout_height="wrap_content"
         android:gravity="left">
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/rawAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:digits="0123456789abcdefABCDEF"
+            android:layout_weight="1"
+            android:completionHint="Select or enter rawAddress"
+            android:completionThreshold="0"
+            android:digits="0123456789abcdefABCDEF "
+            android:drawableRight="@android:drawable/arrow_down_float"
             android:hint="rawAddress"
-            android:inputType="textPersonName"
+            android:inputType="text"
             android:maxLength="14"
             android:text="77 62 4d 53 45" />
 
@@ -33,6 +37,7 @@
             android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:gravity="right"
             android:digits="0123456789"
             android:hint="time ms"
@@ -44,23 +49,23 @@
             android:id="@+id/hexdata"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="3"
             android:text="HEX Data" />
 
-
-
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="left">
 
-    <Switch
-        android:id="@+id/switchID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="false"
-        android:text="Enable Advertising: "
-        android:textSize="18sp" />
+        <Switch
+            android:id="@+id/switchID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="Enable Advertising: "
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/myData"

@@ -15,9 +15,10 @@ import android.os.ParcelUuid;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -35,14 +36,14 @@ public class MainActivity extends AppCompatActivity {
 
     Switch mySwitch, mySwitchr;
     TextView myTV, myTVR, bleCommandPrefex, data, time;
-    EditText editName;
+    AutoCompleteTextView AutoCompleteTextView;
     CheckBox hexData;
     //String myUUIDstring = "CDB7950D-73F1-4D4D-8E47-C090502DBD63";
     //String myUUIDstring = "ec505efd-75b9-44eb-8f2a-6fe0b41e7264";
     String myUUIDstring = "0000fff0-0000-1000-8000-00805f9b34fb";
     int cid = 0xFFF0;
     //public String rawAddress = "77 62 4d 53 45";
-
+    final String[] mAddress = new String[]{"77 62 4D 53 45", "77 62 96 E5 33", "77 62 4B 96 65", "77 62 16 23 43", "77 62 EB 67 C5", "77 62 73 70 79"};
 
     BluetoothManager myManager;
     BluetoothAdapter myAdapter;
@@ -167,8 +168,11 @@ public class MainActivity extends AppCompatActivity {
         data = (TextView) findViewById(R.id.myData);
         time = (TextView) findViewById(R.id.time);
         mySwitch = (Switch) findViewById(R.id.switchID);
-        editName = (EditText) findViewById(R.id.rawAddress);
+        AutoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.rawAddress);
         hexData = (CheckBox) findViewById(R.id.hexdata);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter (this, R.layout.support_simple_spinner_dropdown_item, mAddress);
+        AutoCompleteTextView.setAdapter(adapter);
 
         myManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         myAdapter = myManager.getAdapter();
@@ -197,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             //ParcelUuid puuid = new ParcelUuid(UUID.fromString(myUUIDstring));
                             advFlag = true;
-                            String rawAddress = editName.getText().toString();
+                            String rawAddress = AutoCompleteTextView.getText().toString();
                             int time_ms = Integer.parseInt(time.getText().toString());
 
                             for(int i = 0; i < 256 && advFlag == true; i++){
